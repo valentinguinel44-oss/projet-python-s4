@@ -1,7 +1,7 @@
 from tkinter import *
 
 plateau =Tk()
-plateau.title("Quand vous voyez un bon coup, cherchez-en un meilleur.")
+plateau.title("Quand vous voyez un bon coup, cherchez-en un meilleur!")
 
 hauteur=1000
 largeur=1000
