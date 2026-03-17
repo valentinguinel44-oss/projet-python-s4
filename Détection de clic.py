@@ -24,14 +24,27 @@ for ligne in range(nb_cases):
         couleur = "white" if (ligne + col) % 2 == 0 else "brown"
         canvas.create_rectangle(x1, y1, x2, y2, fill=couleur)
 
+outline=None
 
 #Détection de clic ici
 def detecter_case(event):
+    global outline
     #Conversion des pixels en case
     col = event.x // taille_case
     ligne = event.y // taille_case
+
+    x1= col*taille_case
+    y1= ligne*taille_case
+    x2= x1+taille_case
+    y2= y1+taille_case
     
     print(f"Case cliquée : ligne={ligne}, col={col}")
+
+    if outline is not None:
+        canvas.delete(outline)
+    
+    outline = canvas.create_rectangle(x1,y1,x2,y2, fill=None, outline="green", width=5)
+
 
 #Détecter les clics
 canvas.bind('<Button-1>', detecter_case)
