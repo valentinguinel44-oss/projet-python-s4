@@ -87,7 +87,8 @@ for z in range(10):
                 can1.create_oval(lignes[j], lignes[z], lignes[j]+30, lignes[z]+30, fill="#F5DEB3", outline="gray", width=2, tags="pion")
                 can1.create_oval(lignes[j]+5, lignes[z]+5, lignes[j]+25, lignes[z]+25, fill="#F0CE8F", outline="#F0CE8F", width=2, tags="pion")
 
-#Fonction qui actualise le plateau (il change en temps réel avc le print)
+
+#Fonction qui actualise le plateau (il change en temps réel avc le print + meilleur affichage)
 def actualiser_plateau():
     can1.delete("pion")
     for z in range(10):
@@ -116,7 +117,7 @@ def actualiser_plateau():
     Damier = np.array([PlateauPion])
     print(Damier)
 
-#Fonction pour la dame qui marche (appel dans la fonction deplacerPion)
+#Fonction qui transforme un pion en dame(appel dans la fonction deplacerPion)
 def Dame(ligne, col):
     global PlateauPion
     
@@ -131,29 +132,34 @@ def Dame(ligne, col):
         return True
     return False
 
-#Fonction pr déplacer la dame mais marche pas encore en diag bloquée
+#Fonction pr déplacer la dame qui marche dans le bueno binks(appel dans deplacerPion)
 def deplacerDame(ligne, col, ligne_dest, col_dest):
     global PlateauPion
     pion = PlateauPion[ligne][col]
     
-    # Vérifier que c'est bien une dame
+
     if pion not in [3, 4]:
         return False
     
-    # Vérifier que la destination est vide
-    if PlateauPion[ligne_dest][col_dest] not in [0]:  # Case noire vide
+    if PlateauPion[ligne_dest][col_dest] not in [0]:  
         print("Case destination invalide (pas vide)")
         return False
     
-    # Calculer la direction
+
     diff_ligne = ligne_dest - ligne
     diff_col = abs(col_dest - col)
     
-    # Dame se déplace en diagonale (plusieurs cases possibles)
     if diff_ligne != 0 and diff_col != 0 and abs(diff_ligne) == abs(diff_col):
 
-        direction_ligne = 1 if diff_ligne > 0 else -1
-        direction_col = 1 if (col_dest - col) > 0 else -1
+        if diff_ligne > 0:
+            direction_ligne = 1
+        else:
+            direction_ligne = -1
+        
+        if (col_dest - col) >0:
+            direction_col = 1
+        else:
+            direction_col = -1
         
         ligne_temp = ligne + direction_ligne
         col_temp = col + direction_col
@@ -171,7 +177,7 @@ def deplacerDame(ligne, col, ligne_dest, col_dest):
         print(f"Dame déplacée de ({ligne}, {col}) vers ({ligne_dest}, {col_dest})")
         return True
     
-    print("Mouvement invalide pour une dame")
+    print("Mouvement invalide")
     return False
 
 
@@ -267,7 +273,7 @@ PlateauPion=[[None, 2, None, 2, None, 2, None, 2, None, 2],
             [1, None, 1, None, 1, None, 1, None, 1, None],
             [None, 1, None, 1, None, 1, None, 1, None, 1],
             [1, None, 1, None, 1, None, 1, None, 1, None]]
-    
+
 
 
 can1.pack()
