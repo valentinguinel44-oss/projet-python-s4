@@ -132,7 +132,7 @@ def Dame(ligne, col):
         return True
     return False
 
-#Fonction pr déplacer la dame qui marche dans le bueno binks(appel dans deplacerPion)
+#Fonction pr déplacer la dame(appel dans deplacerPion)
 def deplacerDame(ligne, col, ligne_dest, col_dest):
     global PlateauPion
     pion = PlateauPion[ligne][col]
@@ -185,11 +185,20 @@ def deplacerPion(ligne, col, ligne_dest, col_dest):
     global PlateauPion
     pion = PlateauPion[ligne][col]
     
+    if Tour() is True: 
+        if pion not in [1, 3]:
+            print("Tour des blancs, jouez un pion blanc.")
+            return False
+    else:  
+        if pion not in [2, 4]:
+            print("Tour des noirs, jouez un pion noir.")
+            return False
+        
     if pion in [3, 4]:
-        return deplacerDame(ligne, col, ligne_dest, col_dest)
-    
-    if pion not in [1, 2]:
-        return False
+        resultat = deplacerDame(ligne, col, ligne_dest, col_dest)
+        if resultat:
+            changerTour()  
+        return resultat
     
     if PlateauPion[ligne_dest][col_dest] != 0:
         print("Case destination invalide (pas vide)")
@@ -204,6 +213,7 @@ def deplacerPion(ligne, col, ligne_dest, col_dest):
             PlateauPion[ligne][col] = 0
             Dame(ligne_dest, col_dest)
             actualiser_plateau()
+            changerTour()
             
             print(f"Pion déplacé de ({ligne}, {col}) vers ({ligne_dest}, {col_dest})")
             return True
@@ -211,54 +221,120 @@ def deplacerPion(ligne, col, ligne_dest, col_dest):
     print("Mouvement invalide")
     return False
 
+outline_pion = None
+outline_case = None
+case_select = None
 
-outline=None
-case_select=None
-
-#Détection de clic ici
 def detecter_case(event):
-    global outline
+    global outline_case
+    global outline_pion
     global case_select
-    #Conversion des pixels en case
+    
     col = event.x // taille_case
     ligne = event.y // taille_case
 
-    x1= col*taille_case
-    y1= ligne*taille_case
-    x2= x1+taille_case
-    y2= y1+taille_case
+    x1 = col * taille_case
+    y1 = ligne * taille_case
+    x2 = x1 + taille_case
+    y2 = y1 + taille_case
     
     print(f"Case cliquée : ligne={ligne}, col={col}")
-    valeur_case=PlateauPion[ligne][col]
+    valeur_case = PlateauPion[ligne][col]
 
-    if outline is not None:
-        can1.delete(outline)
+    if outline_case is not None:
+        can1.delete(outline_case)
     
     if case_select is None:
-        if valeur_case in [1,2,3,4]:
-            case_select=(ligne,col)
-            outline = can1.create_rectangle(x1,y1,x2,y2, fill=None, outline="green", width=5)
-            print(f"Pion selectionné {valeur_case}")
+        if outline_pion is not None:
+            can1.delete(outline_pion)
+        
+        if valeur_case in [1, 2, 3, 4]:
+            case_select = (ligne, col)
+            
+            outline_case = can1.create_rectangle(x1, y1, x2, y2, fill=None, outline="green", width=5)
+            outline_pion = can1.create_oval(x1+8, y1+8, x2-8, y2-8, fill=None, outline="yellow", width=3)
+            afficherMouvement(ligne, col)
+            
+            print(f"Pion sélectionné {valeur_case}")
         else:
             print("Pas de pion ici")
+    
     else:
         ligne_depart, col_depart = case_select
-    
+        
         if (ligne, col) == case_select:
             case_select = None
-            outline = None
+            outline_case = None
+            if outline_pion is not None:
+                can1.delete(outline_pion)
+                outline_pion = None
+            can1.delete("mouvement_possible")
             print("Pion désélectionné")
             return
         
         if deplacerPion(ligne_depart, col_depart, ligne, col):
             case_select = None
-            outline = None
-        elif deplacerDame(ligne_depart, col_depart, ligne, col):
-            case_select = None
-            outline = None
+            outline_case = None
+            if outline_pion is not None:
+                can1.delete(outline_pion)
+                outline_pion = None
+            can1.delete("mouvement_possible")
         else:
-            outline = can1.create_rectangle(x1, y1, x2, y2, fill=None, outline="green", width=5)
+            outline_case = can1.create_rectangle(x1, y1, x2, y2, fill=None, outline="green", width=5)
 
+def afficherMouvement(ligne, col):
+    global PlateauPion
+    
+    can1.delete("mouvement_possible")
+    
+    pion = PlateauPion[ligne][col]
+    
+    if pion in [1, 2]:
+        if pion == 1:  
+            directions = [(-1, -1), (-1, 1)]  
+        else:  
+            directions = [(1, -1), (1, 1)] 
+
+        for diff_ligne, diff_col in directions:
+            nouvelle_ligne = ligne + diff_ligne
+            nouvelle_col = col + diff_col
+
+            if 0 <= nouvelle_ligne < 10 and 0 <= nouvelle_col < 10:
+                if PlateauPion[nouvelle_ligne][nouvelle_col] == 0:
+                    x_centre = nouvelle_col * taille_case + taille_case // 2
+                    y_centre = nouvelle_ligne * taille_case + taille_case // 2
+                    
+
+                    can1.create_oval(x_centre - 8, y_centre - 8, 
+                                    x_centre + 8, y_centre + 8,
+                                    fill="gray", outline="black", width=1,
+                                    tags="mouvement_possible")
+    
+    elif pion in [3, 4]:
+        directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        
+        for diff_ligne, diff_col in directions:
+            distance = 1
+            while True:
+                nouvelle_ligne = ligne + (diff_ligne * distance)
+                nouvelle_col = col + (diff_col * distance)
+                
+                if not (0 <= nouvelle_ligne < 10 and 0 <= nouvelle_col < 10):
+                    break
+                
+                if PlateauPion[nouvelle_ligne][nouvelle_col] != 0:
+                    break
+
+                x_centre = nouvelle_col * taille_case + taille_case // 2
+                y_centre = nouvelle_ligne * taille_case + taille_case // 2
+                
+                can1.create_oval(x_centre - 8, y_centre - 8,
+                                x_centre + 8, y_centre + 8,
+                                fill="gray", outline="black", width=1,
+                                tags="mouvement_possible")
+                
+                distance += 1
+    
 
 #Détecter les clics
 can1.bind('<Button-1>', detecter_case)
@@ -274,6 +350,21 @@ PlateauPion=[[None, 2, None, 2, None, 2, None, 2, None, 2],
             [None, 1, None, 1, None, 1, None, 1, None, 1],
             [1, None, 1, None, 1, None, 1, None, 1, None]]
 
+
+tour_joueur = 1  #1 = blancs et 2 = noirs
+
+def Tour():
+    global tour_joueur
+    return tour_joueur == 1
+
+def changerTour():
+    global tour_joueur
+    if tour_joueur == 1:
+        tour_joueur = 2
+        print("Tour des NOIRS")
+    else:
+        tour_joueur = 1
+        print("Tour des BLANCS")
 
 
 can1.pack()
