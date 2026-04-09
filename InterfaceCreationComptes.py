@@ -1,5 +1,5 @@
 from tkinter import *
-from fonctionsCreationCompte import *
+from fonctionsCreationComptes import *
 from PIL import Image, ImageTk
 import pygame
 
@@ -74,6 +74,7 @@ def creerFrameConnexionInscription(parent,vider, quitter):
             
             mdp.bind("<Return>", lambda event: verifMdp.focus()) # fait grace à internet
             verifMdp.bind("<Return>", lambda event: conditionUtilisation.focus())
+        
         return etat
     return {
         "frame": frameConnexion,
@@ -210,10 +211,8 @@ def validerConnexion(nb):
             frameAccueil["frame"].pack(fill="both", expand=True)
             if dicoJoueur["Joueur1"]==True and dicoJoueur["Joueur2"]==False:
                 dicoJoueur["nomJ1"]=frameConnexion["pseudo"].get()
-                print(frameConnexion["pseudo"].get())
             elif dicoJoueur["Joueur2"]==True and dicoJoueur["Joueur1"]==False:
                 dicoJoueur["nomJ2"]=frameConnexion["pseudo"].get()
-                print(frameConnexion["pseudo"].get())
         elif dicoJoueur["nomJ1"]=="" and dicoJoueur["nomJ2"]==frameConnexion["pseudo"].get():
             popupErreur("Tu essayes de te connecter \navec 2 fois le même joueur !!")
         elif dicoJoueur["nomJ2"]=="" and dicoJoueur["nomJ1"]==frameConnexion["pseudo"].get():
@@ -221,7 +220,6 @@ def validerConnexion(nb):
         else:
             if dicoJoueur["Joueur1"]==True and dicoJoueur["Joueur2"]==True and dicoJoueur["nomJ2"]=="":
                 dicoJoueur["nomJ2"]=frameConnexion["pseudo"].get()
-                print(frameConnexion["pseudo"].get())
             else:
                 dicoJoueur["nomJ1"]=frameConnexion["pseudo"].get()
             pygame.mixer.music.stop() 
@@ -232,13 +230,13 @@ def validerConnexion(nb):
         if frameConnexion["pseudo"].get() == "" or frameConnexion["mdp"].get() == "" or frameConnexion["verifMdp"].get() == ""  :
             popupErreur("Veuillez saisir des données !!")
         elif frameConnexion["choixCondition"].get()=="non" :
-            popupErreur("Veuiller accepter les \nconditions d'utilisation")
+            popupErreur("Veuillez accepter les \nconditions d'utilisation")
         elif frameConnexion["mdp"].get()!=frameConnexion["verifMdp"].get():
             frameConnexion["mdp"].delete(0, END)
             frameConnexion["verifMdp"].delete(0, END)
             popupErreur("Les mots de passe sont different")
         elif frameConnexion["pseudo"].get() in tabComptes:
-            popupErreur("Veuilez vous connecter\n un compte existe déjà à ce nom")
+            popupErreur("Veuillez vous connecter\n un compte existe déjà à ce nom")
         else:
             dicoComptes[frameConnexion["pseudo"].get()] = {"mdp":frameConnexion["mdp"].get()}
             dicoComptes[frameConnexion["pseudo"].get()]["score"]=0
@@ -251,8 +249,8 @@ def validerConnexion(nb):
 def vider():
     frameConnexion["pseudo"].delete(0, END)
     frameConnexion["mdp"].delete(0, END)
-    if True :
-        frameConnexion["verifMdp"].delete(0, END)
+    frameConnexion["verifMdp"].delete(0, END)
+    frameConnexion["pseudo"].focus_set()
 
 dicoJoueur={
     "Joueur1":False,
