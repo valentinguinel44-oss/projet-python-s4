@@ -22,9 +22,9 @@ bouton=Button(cadreBeige,bg=CouleurCaseNoire, width=100, height=100)
 for i in range(10):
     for j in range(10):
         if (i+j)%2==0:
-            can1.create_rectangle(j*(hauteur/10)+100,i*(hauteur/10),j*(hauteur/10)+(hauteur/10)+100,i*(hauteur/10)+(hauteur/10), fill=CouleurCaseBeige)
+            can1.create_rectangle(j*(hauteur/10),i*(hauteur/10),j*(hauteur/10)+(hauteur/10),i*(hauteur/10)+(hauteur/10), fill=CouleurCaseBeige)
         else:
-            can1.create_rectangle(j*(hauteur/10)+100,i*(hauteur/10),j*(hauteur/10)+(hauteur/10)+100,i*(hauteur/10)+(hauteur/10), fill=CouleurCaseNoire)
+            can1.create_rectangle(j*(hauteur/10),i*(hauteur/10),j*(hauteur/10)+(hauteur/10),i*(hauteur/10)+(hauteur/10), fill=CouleurCaseNoire)
 
 
 #####Les pions
@@ -80,12 +80,12 @@ for z in range(10):
     for j in range(10):
         if (z+j)%2!=0:
             if z<4:
-                can1.create_oval(lignes[j]+100, lignes[z], lignes[j]+130, lignes[z]+30, fill="black", outline="gray", width=2, tags="pion")
-                can1.create_oval(lignes[j]+105, lignes[z]+5, lignes[j]+125, lignes[z]+25, fill="#2b2b2b", outline="#2b2b2b", width=2, tags="pion")
+                can1.create_oval(lignes[j], lignes[z], lignes[j]+30, lignes[z]+30, fill="black", outline="gray", width=2, tags="pion")
+                can1.create_oval(lignes[j]+5, lignes[z]+5, lignes[j]+25, lignes[z]+25, fill="#2b2b2b", outline="#2b2b2b", width=2, tags="pion")
             
             if z>5:
-                can1.create_oval(lignes[j]+100, lignes[z], lignes[j]+130, lignes[z]+30, fill="#F5DEB3", outline="gray", width=2, tags="pion")
-                can1.create_oval(lignes[j]+105, lignes[z]+5, lignes[j]+125, lignes[z]+25, fill="#F0CE8F", outline="#F0CE8F", width=2, tags="pion")
+                can1.create_oval(lignes[j], lignes[z], lignes[j]+30, lignes[z]+30, fill="#F5DEB3", outline="gray", width=2, tags="pion")
+                can1.create_oval(lignes[j]+5, lignes[z]+5, lignes[j]+25, lignes[z]+25, fill="#F0CE8F", outline="#F0CE8F", width=2, tags="pion")
 
 
 #Fonction qui actualise le plateau (il change en temps réel avc le print + meilleur affichage)
@@ -94,26 +94,26 @@ def actualiser_plateau():
     for z in range(10):
         for j in range(10):
             if PlateauPion[z][j] == 2:  
-                can1.create_oval(lignes[j]+100, lignes[z], lignes[j]+130, lignes[z]+30, 
+                can1.create_oval(lignes[j], lignes[z], lignes[j]+30, lignes[z]+30, 
                                 fill="black", outline="gray", width=2, tags="pion")
-                can1.create_oval(lignes[j]+105, lignes[z]+5, lignes[j]+125, lignes[z]+25, 
+                can1.create_oval(lignes[j]+5, lignes[z]+5, lignes[j]+25, lignes[z]+25, 
                                 fill="#2b2b2b", outline="#2b2b2b", width=2, tags="pion")
             
             elif PlateauPion[z][j] == 1:  
-                can1.create_oval(lignes[j]+100, lignes[z], lignes[j]+130, lignes[z]+30, 
+                can1.create_oval(lignes[j], lignes[z], lignes[j]+30, lignes[z]+30, 
                                 fill="#F5DEB3", outline="gray", width=2, tags="pion")
-                can1.create_oval(lignes[j]+105, lignes[z]+5, lignes[j]+125, lignes[z]+25, 
+                can1.create_oval(lignes[j]+5, lignes[z]+5, lignes[j]+25, lignes[z]+25, 
                                 fill="#F0CE8F", outline="#F0CE8F", width=2, tags="pion")
                 
             elif PlateauPion[z][j] == 3:
-                can1.create_oval(lignes[j]+100, lignes[z], lignes[j]+130, lignes[z]+30,
+                can1.create_oval(lignes[j], lignes[z], lignes[j]+30, lignes[z]+30,
                                 fill="#F5DEB3", outline="gray", width=2, tags="pion")
-                can1.create_text(lignes[j]+115, lignes[z]+15, text="♛", font=("Arial", 20), fill="black", tags="pion")
+                can1.create_text(lignes[j]+15, lignes[z]+15, text="♛", font=("Arial", 20), fill="black", tags="pion")
 
             elif PlateauPion[z][j] == 4:
-                can1.create_oval(lignes[j]+100, lignes[z], lignes[j]+130, lignes[z]+30,
+                can1.create_oval(lignes[j], lignes[z], lignes[j]+30, lignes[z]+30,
                                 fill="black", outline="gray", width=2, tags="pion")
-                can1.create_text(lignes[j]+115, lignes[z]+15, text="♛", font=("Arial", 20), fill="gold", tags="pion")
+                can1.create_text(lignes[j]+15, lignes[z]+15, text="♛", font=("Arial", 20), fill="gold", tags="pion")
     Damier = np.array([PlateauPion])
     print(Damier)
 
@@ -230,16 +230,10 @@ def detecter_case(event):
     global outline_pion
     global case_select
     
-    
-    col = (event.x - 100) // taille_case 
+    col = event.x // taille_case
     ligne = event.y // taille_case
 
-    
-    if col < 0 or col >= 10 or ligne < 0 or ligne >= 10:
-        print("Clic en dehors du damier")
-        return
-
-    x1 = col * taille_case + 100  
+    x1 = col * taille_case
     y1 = ligne * taille_case
     x2 = x1 + taille_case
     y2 = y1 + taille_case
@@ -307,9 +301,10 @@ def afficherMouvement(ligne, col):
 
             if 0 <= nouvelle_ligne < 10 and 0 <= nouvelle_col < 10:
                 if PlateauPion[nouvelle_ligne][nouvelle_col] == 0:
-                    x_centre = nouvelle_col * taille_case + taille_case // 2 + 100 
+                    x_centre = nouvelle_col * taille_case + taille_case // 2
                     y_centre = nouvelle_ligne * taille_case + taille_case // 2
                     
+
                     can1.create_oval(x_centre - 8, y_centre - 8, 
                                     x_centre + 8, y_centre + 8,
                                     fill="gray", outline="black", width=1,
@@ -330,7 +325,7 @@ def afficherMouvement(ligne, col):
                 if PlateauPion[nouvelle_ligne][nouvelle_col] != 0:
                     break
 
-                x_centre = nouvelle_col * taille_case + taille_case // 2 + 100  
+                x_centre = nouvelle_col * taille_case + taille_case // 2
                 y_centre = nouvelle_ligne * taille_case + taille_case // 2
                 
                 can1.create_oval(x_centre - 8, y_centre - 8,
